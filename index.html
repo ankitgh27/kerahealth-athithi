@@ -1,1 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeraHealth Athithi - Digital Migrant Health Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printableCard, #printableCard * { visibility: visible; }
+      #printableCard { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
+  <!-- TOP GOVT BANNER -->
+  <header class="bg-brand-900 text-white border-b-2 border-amber-400">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between text-xs sm:text-sm">
+      <div class="flex items-center space-x-2">
+        <span class="bg-amber-400 text-brand-900 px-2 py-0.5 rounded font-bold uppercase tracking-wider text-[11px]">SIH 25083</span>
+        <span>Government of Kerala • Health Services Department & NHM</span>
+      </div>
+      <div class="flex items-center space-x-3 mt-1 sm:mt-0">
+        <span class="text-emerald-200"><i class="fa-solid fa-earth-asia mr-1"></i> Language:</span>
+        <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-brand-800 text-white rounded px-2 py-1 border border-brand-700 focus:outline-none">
+          <option value="en">English</option>
+          <option value="ml">മലയാളം (Malayalam)</option>
+          <option value="hi">हिन्दी (Hindi)</option>
+          <option value="bn">বাংলা (Bengali)</option>
+          <option value="as">অসমীয়া (Assamese)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVBAR -->
+  <nav class="bg-white shadow sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-brand-700 text-white flex items-center justify-center font-black text-xl shadow">
+          KA
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-black text-brand-800 tracking-tight" id="txt-title">KeraHealth Athithi</h1>
+          <p class="text-xs text-slate-500 font-medium" id="txt-subtitle">Migrant Worker Health Surveillance & Digital Pass Platform</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2 sm:space-x-4">
+        <button onclick="switchTab('dashboard')" class="nav-tab px-3 py-1.5 rounded-lg text-sm font-semibold transition bg-brand-50 text-brand-700" id="btn-tab-dashboard">
+          <i class="fa-solid fa-chart-line mr-1"></i> Surveillance & SDGs
+        </button>
+        <button onclick="switchTab('doctor')" class="nav-tab px-3 py-1.5 rounded-lg text-sm font-semibold transition text-slate-600 hover:bg-slate-100" id="btn-tab-doctor">
+          <i class="fa-solid fa-stethoscope mr-1"></i> Doctor OP
+        </button>
+        <button onclick="switchTab('screening')" class="nav-tab px-3 py-1.5 rounded-lg text-sm font-semibold transition text-slate-600 hover:bg-slate-100" id="btn-tab-screening">
+          <i class="fa-solid fa-campground mr-1"></i> Camp Entry
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
+
+    <!-- VIEW 1: SURVEILLANCE & SDG DASHBOARD -->
+    <div id="view-dashboard" class="space-y-6">
+      <!-- SDG Alert Strip -->
+      <div class="bg-emerald-50 border-l-4 border-brand-600 p-4 rounded-r-lg flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div>
+          <h2 class="font-bold text-brand-900 text-sm md:text-base flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-brand-600"></i>
+            SDG 3.3 & 3.8 Aligned Epidemic Early Warning System (DEWS)
+          </h2>
+          <p class="text-xs text-emerald-800 mt-0.5">Automated sentinel tracking for Malaria, Dengue, TB, and Leprosy across guest worker labor colonies.</p>
+        </div>
+        <div class="flex gap-2">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping mr-1.5"></span> 14 Districts Active
+          </span>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+            Perumbavoor: Orange Alert
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick Metrics -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-medium text-slate-500 uppercase">Registered Athithi Passports</div>
+          <div class="text-2xl font-bold text-slate-900 mt-1">428,940</div>
+          <div class="text-xs text-emerald-600 mt-1 font-medium"><i class="fa-solid fa-arrow-trend-up"></i> +1,420 this week</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-medium text-slate-500 uppercase">Screened at Camps</div>
+          <div class="text-2xl font-bold text-slate-900 mt-1">289,120</div>
+          <div class="text-xs text-emerald-600 mt-1 font-medium"><i class="fa-solid fa-check"></i> 67.4% Camp coverage</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-medium text-slate-500 uppercase">TB CBNAAT Screenings</div>
+          <div class="text-2xl font-bold text-amber-600 mt-1">14,830</div>
+          <div class="text-xs text-slate-500 mt-1 font-medium">142 Cases on DOTS therapy</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-medium text-slate-500 uppercase">ABHA Linked Accounts</div>
+          <div class="text-2xl font-bold text-brand-700 mt-1">94.8%</div>
+          <div class="text-xs text-slate-500 mt-1 font-medium">SDG 3.8 Target reached</div>
+        </div>
+      </div>
+
+      <!-- Charts & High-Risk Map Mock -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-slate-800 text-sm sm:text-base">Infectious Disease Surveillance Trends (Monthly Detected Cases)</h3>
+            <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Past 6 Months</span>
+          </div>
+          <div class="h-64">
+            <canvas id="diseaseChart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+          <h3 class="font-bold text-slate-800 text-sm sm:text-base mb-3">District Risk Surveillance</h3>
+          <div class="space-y-3 flex-1 overflow-y-auto max-h-64 pr-1">
+            <div class="flex items-center justify-between p-2.5 bg-red-50 border border-red-100 rounded-lg">
+              <div>
+                <p class="font-semibold text-xs text-slate-900">Ernakulam (Perumbavoor Cluster)</p>
+                <p class="text-[11px] text-red-700">18 suspected Malaria / 42 Fever alerts</p>
+              </div>
+              <span class="px-2 py-0.5 text-[10px] font-bold bg-red-600 text-white rounded">HIGH RISK</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-amber-50 border border-amber-100 rounded-lg">
+              <div>
+                <p class="font-semibold text-xs text-slate-900">Palakkad (Kanjikode Industrial)</p>
+                <p class="text-[11px] text-amber-700">6 Dengue / Silicosis monitoring</p>
+              </div>
+              <span class="px-2 py-0.5 text-[10px] font-bold bg-amber-500 text-white rounded">MODERATE</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+              <div>
+                <p class="font-semibold text-xs text-slate-900">Kozhikode (Feroke / Beypore)</p>
+                <p class="text-[11px] text-slate-600">Screening camp planned for 450 workers</p>
+              </div>
+              <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-600 text-white rounded">NORMAL</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+              <div>
+                <p class="font-semibold text-xs text-slate-900">Thiruvananthapuram (Vizhinjam Port)</p>
+                <p class="text-[11px] text-slate-600">Routine quarterly health audit cleared</p>
+              </div>
+              <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-600 text-white rounded">NORMAL</span>
+            </div>
+          </div>
+          <button onclick="alert('Sent notification to District Medical Officers (DMO) of Ernakulam and Palakkad.')" class="mt-4 w-full py-2 bg-slate-800 text-white rounded-lg text-xs font-semibold hover:bg-slate-900 transition">
+            <i class="fa-solid fa-paper-plane mr-1"></i> Trigger DMO Sentinel Alert
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: DOCTOR CLINICAL CONSULTATION & DIGITAL PASS GENERATOR -->
+    <div id="view-doctor" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Patient Lookup & Entry -->
+        <div class="lg:col-span-7 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex items-center justify-between border-b pb-3">
+            <div>
+              <h2 class="font-bold text-slate-800 text-base sm:text-lg">Doctor Consultation Desk</h2>
+              <p class="text-xs text-slate-500">Government Primary / Taluk / General Hospital Kerala</p>
+            </div>
+            <span class="text-xs font-semibold bg-emerald-100 text-brand-800 px-2.5 py-1 rounded">Dr. Ananya Nair (MO-Ekm)</span>
+          </div>
+
+          <!-- Search or Load Mock -->
+          <div class="flex gap-2">
+            <input type="text" id="searchId" value="KL-ATH-2026-9812" placeholder="Enter Athithi ID / Aadhaar / Mobile" class="flex-1 text-sm border rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+            <button onclick="loadPatientRecord()" class="bg-brand-700 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-brand-800">
+              <i class="fa-solid fa-magnifying-glass mr-1"></i> Fetch Record
+            </button>
+          </div>
+
+          <!-- Diagnostic Entry Form -->
+          <form id="clinicalForm" onsubmit="saveConsultation(event)" class="space-y-4 pt-2">
+            <div class="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Patient Name</label>
+                <input type="text" id="docName" value="Bikram Mondal" required class="w-full border rounded-lg p-2 bg-slate-50">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Origin State & District</label>
+                <input type="text" id="docOrigin" value="West Bengal (Murshidabad)" required class="w-full border rounded-lg p-2 bg-slate-50">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Kerala Cluster Location</label>
+                <input type="text" id="docCluster" value="Perumbavoor Plywood Cluster, Ernakulam" required class="w-full border rounded-lg p-2 bg-slate-50">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Blood Group</label>
+                <select id="docBlood" class="w-full border rounded-lg p-2 bg-white">
+                  <option>B+ve</option>
+                  <option>O+ve</option>
+                  <option>A+ve</option>
+                  <option>AB+ve</option>
+                  <option>O-ve</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Communicable Disease Surveillance Check -->
+            <div class="border-t pt-3">
+              <label class="block text-xs font-bold text-slate-800 mb-1.5">Infectious Disease Surveillance Checklist</label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <label class="flex items-center gap-1.5 p-2 border rounded bg-slate-50 cursor-pointer">
+                  <input type="checkbox" id="chkMalaria" class="rounded text-brand-600"> Malaria (RDT / Smear)
+                </label>
+                <label class="flex items-center gap-1.5 p-2 border rounded bg-slate-50 cursor-pointer">
+                  <input type="checkbox" id="chkTb" class="rounded text-brand-600"> TB GeneXpert Flag
+                </label>
+                <label class="flex items-center gap-1.5 p-2 border rounded bg-slate-50 cursor-pointer">
+                  <input type="checkbox" id="chkDengue" class="rounded text-brand-600"> Dengue NS1 / IgM
+                </label>
+                <label class="flex items-center gap-1.5 p-2 border rounded bg-slate-50 cursor-pointer">
+                  <input type="checkbox" id="chkSkin" class="rounded text-brand-600"> Leprosy / Skin Patch
+                </label>
+              </div>
+            </div>
+
+            <!-- Prescription & Visual Dosage -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">Doctor Diagnosis & Prescription</label>
+              <textarea id="docRx" rows="2" class="w-full border rounded-lg p-2 text-xs focus:ring-1 focus:ring-brand-600" placeholder="Enter medicine, instructions, follow-up dates...">Tab Paracetamol 650mg TDS x 3 days. Chloroquine full course prescribed under supervision. Advised bed net usage.</textarea>
+            </div>
+
+            <div class="flex gap-3">
+              <button type="submit" class="flex-1 bg-brand-700 text-white font-semibold py-2.5 rounded-lg text-sm hover:bg-brand-800 transition">
+                <i class="fa-solid fa-floppy-disk mr-1"></i> Update Health Pass & Trigger Alerts
+              </button>
+              <button type="button" onclick="window.print()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-semibold border">
+                <i class="fa-solid fa-print mr-1"></i> Print Card
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Athithi Smart Digital Card Preview -->
+        <div class="lg:col-span-5 flex flex-col items-center">
+          <div class="w-full max-w-sm bg-white rounded-2xl shadow-lg border-2 border-brand-700 overflow-hidden" id="printableCard">
+            <!-- Card Header -->
+            <div class="bg-gradient-to-r from-brand-900 to-brand-700 p-3.5 text-white flex items-center justify-between">
+              <div>
+                <p class="text-[9px] uppercase tracking-wider text-emerald-300 font-bold">Kerala Athithi Arogya Pass</p>
+                <p class="text-xs font-black">MIGRANT HEALTH IDENTITY CARD</p>
+              </div>
+              <div class="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center font-bold text-xs">
+                KL
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-4 space-y-3">
+              <div class="flex gap-3">
+                <div class="w-20 h-24 bg-slate-100 border border-slate-300 rounded flex flex-col items-center justify-center text-slate-400 text-xs text-center p-1">
+                  <i class="fa-solid fa-user text-2xl mb-1 text-slate-500"></i>
+                  <span class="text-[9px] text-slate-600 font-bold">VERIFIED</span>
+                </div>
+                <div class="flex-1 text-xs space-y-1">
+                  <div>
+                    <span class="text-slate-400 text-[10px] block">NAME</span>
+                    <span class="font-bold text-slate-900 text-sm" id="cardName">Bikram Mondal</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 text-[10px] block">ATHITHI PASS ID</span>
+                    <span class="font-mono font-bold text-brand-700 text-xs" id="cardId">KL-ATH-2026-9812</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <div>
+                      <span class="text-slate-400 text-[10px] block">BLOOD</span>
+                      <span class="font-bold text-red-600" id="cardBlood">B+ve</span>
+                    </div>
+                    <div>
+                      <span class="text-slate-400 text-[10px] block">ORIGIN</span>
+                      <span class="font-semibold text-slate-700" id="cardOrigin">Murshidabad, WB</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Vaccination & Screening Badges -->
+              <div class="border-t pt-2 grid grid-cols-3 gap-1 text-[10px] text-center font-semibold">
+                <div class="bg-emerald-50 text-emerald-800 p-1 rounded border border-emerald-200">
+                  <i class="fa-solid fa-check text-emerald-600"></i> Tetanus OK
+                </div>
+                <div class="bg-emerald-50 text-emerald-800 p-1 rounded border border-emerald-200">
+                  <i class="fa-solid fa-check text-emerald-600"></i> TB Screened
+                </div>
+                <div class="bg-amber-50 text-amber-800 p-1 rounded border border-amber-200">
+                  <i class="fa-solid fa-clock text-amber-600"></i> Hep-B Due
+                </div>
+              </div>
+
+              <!-- QR & Audio Visual Instructions -->
+              <div class="bg-slate-50 p-2.5 rounded-lg border flex items-center justify-between">
+                <div>
+                  <p class="text-[10px] font-bold text-slate-800">Scan at Any PHC / Taluk</p>
+                  <p class="text-[9px] text-slate-500">Free treatment under AROGYAKIRANAM</p>
+                  <p class="text-[9px] text-brand-700 font-semibold mt-1">
+                    <i class="fa-solid fa-phone-volume mr-1"></i> Helpline: 1056 (DISHA - 7 Langs)
+                  </p>
+                </div>
+                <!-- Mock QR Code SVG -->
+                <div class="w-14 h-14 bg-white p-1 border rounded flex items-center justify-center shadow-inner">
+                  <i class="fa-solid fa-qrcode text-3xl text-slate-800"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-brand-900 text-center py-1 text-[9px] text-white">
+              Emergency & Disease Surveillance Registry • Government of Kerala
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-2 text-center">Accessible offline via SMS token or physical laminated QR card.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: FIELD HEALTH INSPECTOR CAMP REGISTRATION -->
+    <div id="view-screening" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <div class="max-w-2xl mx-auto space-y-4">
+          <div class="border-b pb-3">
+            <h2 class="text-base sm:text-lg font-bold text-slate-800">Labor Camp & Factory Health Screening Entry</h2>
+            <p class="text-xs text-slate-500">Offline-sync ready intake for Health Inspectors (HI) & ASHA workers visiting migrant barracks.</p>
+          </div>
+
+          <form onsubmit="handleScreeningSubmit(event)" class="space-y-4 text-xs sm:text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Aadhaar / Passport / Voter ID No.</label>
+                <input type="text" required placeholder="XXXX-XXXX-XXXX" class="w-full border rounded-lg p-2.5">
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Full Name</label>
+                <input type="text" required placeholder="Name of guest worker" class="w-full border rounded-lg p-2.5">
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Mobile Number (Worker or Contractor)</label>
+                <input type="tel" required placeholder="10-digit number" class="w-full border rounded-lg p-2.5">
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Native Language</label>
+                <select class="w-full border rounded-lg p-2.5 bg-white">
+                  <option>Bengali</option>
+                  <option>Hindi</option>
+                  <option>Assamese</option>
+                  <option>Odia</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Current Kerala Employer / Contractor</label>
+                <input type="text" placeholder="e.g. Modern Plywoods Ltd" class="w-full border rounded-lg p-2.5">
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Camp Location / Ward No.</label>
+                <input type="text" placeholder="Ward 4, Rayonpuram, Perumbavoor" class="w-full border rounded-lg p-2.5">
+              </div>
+            </div>
+
+            <!-- Rapid Test Results on Spot -->
+            <div class="p-3 bg-slate-50 border rounded-lg space-y-2">
+              <span class="font-bold text-slate-800 block text-xs">On-Spot Rapid Screening Tests</span>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <select class="border rounded p-2 text-xs bg-white">
+                  <option>Malaria RDT: Negative</option>
+                  <option>Malaria RDT: Positive (Pf/Pv)</option>
+                </select>
+                <select class="border rounded p-2 text-xs bg-white">
+                  <option>Symptomatic Cough > 2 Weeks: No</option>
+                  <option>Symptomatic Cough > 2 Weeks: Yes (Sputum Collected)</option>
+                </select>
+                <select class="border rounded p-2 text-xs bg-white">
+                  <option>Fever / Rash Present: No</option>
+                  <option>Fever / Rash Present: Yes</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm transition">
+              <i class="fa-solid fa-plus-circle mr-1"></i> Enroll Worker & Issue Immediate Athithi Card
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t py-4 text-center text-xs text-slate-500">
+    <p>Smart India Hackathon 2025/2026 • Problem Statement ID 25083 • Government of Kerala Health Service Department</p>
+    <p class="mt-1 text-[11px] text-slate-400">Aligned with UN Sustainable Development Goals: SDG 3 (Good Health & Well-being) & SDG 10 (Reduced Inequalities)</p>
+  </footer>
+
+  <script>
+    // Tab Switching Logic
+    function switchTab(tabId) {
+      document.getElementById('view-dashboard').classList.add('hidden');
+      document.getElementById('view-doctor').classList.add('hidden');
+      document.getElementById('view-screening').classList.add('hidden');
+
+      document.querySelectorAll('.nav-tab').forEach(b => {
+        b.classList.remove('bg-brand-50', 'text-brand-700');
+        b.classList.add('text-slate-600');
+      });
+
+      document.getElementById('view-' + tabId).classList.remove('hidden');
+      document.getElementById('btn-tab-' + tabId).classList.add('bg-brand-50', 'text-brand-700');
+      document.getElementById('btn-tab-' + tabId).classList.remove('text-slate-600');
+    }
+
+    // Chart.js initialization
+    let chartInstance = null;
+    window.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('diseaseChart').getContext('2d');
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+          datasets: [
+            {
+              label: 'Malaria Cases',
+              data: [12, 19, 25, 14, 9, 7],
+              backgroundColor: '#ef4444'
+            },
+            {
+              label: 'Dengue Cases',
+              data: [8, 15, 32, 28, 14, 11],
+              backgroundColor: '#f59e0b'
+            },
+            {
+              label: 'TB Screenings',
+              data: [65, 80, 95, 110, 140, 160],
+              backgroundColor: '#10b981'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    });
+
+    // Save Consultation & Update Card
+    function saveConsultation(e) {
+      e.preventDefault();
+      const name = document.getElementById('docName').value;
+      const origin = document.getElementById('docOrigin').value;
+      const blood = document.getElementById('docBlood').value;
+
+      document.getElementById('cardName').innerText = name;
+      document.getElementById('cardOrigin').innerText = origin;
+      document.getElementById('cardBlood').innerText = blood;
+
+      const hasMalaria = document.getElementById('chkMalaria').checked;
+      const hasTb = document.getElementById('chkTb').checked;
+
+      if (hasMalaria || hasTb) {
+        alert('ALERT: Sentinel disease flag logged. Automated SMS notification dispatched to District Surveillance Officer (IDSP).');
+      } else {
+        alert('Consultation record updated and synced with Kerala Athithi Health Registry.');
+      }
+    }
+
+    function handleScreeningSubmit(e) {
+      e.preventDefault();
+      alert('Worker successfully registered into the state database. Digital Athithi Pass generated!');
+      switchTab('doctor');
+    }
+
+    function loadPatientRecord() {
+      document.getElementById('docName').value = "Bikram Mondal";
+      document.getElementById('docOrigin').value = "Murshidabad, West Bengal";
+      document.getElementById('cardName').innerText = "Bikram Mondal";
+      alert('Record fetched successfully from Kerala Athithi Master Registry.');
+    }
+
+    // Multilingual Localization Strings
+    const translations = {
+      en: {
+        title: "KeraHealth Athithi",
+        subtitle: "Migrant Worker Health Surveillance & Digital Pass Platform",
+        tabSurv: "Surveillance & SDGs",
+        tabDoc: "Doctor OP",
+        tabCamp: "Camp Entry"
+      },
+      hi: {
+        title: "केराहेल्थ अतिथि",
+        subtitle: "प्रवासी श्रमिक स्वास्थ्य निगरानी एवं डिजिटल पास प्लेटफॉर्म",
+        tabSurv: "निगरानी एवं सतत विकास लक्ष्य",
+        tabDoc: "डॉक्टर ओ.पी.डी",
+        tabCamp: "शिविर पंजीकरण"
+      },
+      bn: {
+        title: "কেরাহেলথ অতিথি",
+        subtitle: "অভিবাসী শ্রমিক স্বাস্থ্য নজরদারি ও ডিজিটাল হেলথ কার্ড",
+        tabSurv: "নজরদারি ও এসডিজি",
+        tabDoc: "ডাক্তার ওপিডি",
+        tabCamp: "ক্যাম্প স্ক্রিনিং"
+      },
+      ml: {
+        title: "കേരഹെൽത്ത് അതിഥി",
+        subtitle: "അതിഥി തൊഴിലാളി ഡിജിറ്റൽ ആരോഗ്യ നിരീക്ഷണ പോർട്ടൽ",
+        tabSurv: "രോഗ നിരീക്ഷണം & എസ്.ഡി.ജി",
+        tabDoc: "ഡോക്ടർ കൺസൾട്ടേഷൻ",
+        tabCamp: "ക്യാമ്പ് സ്ക്രീനിംഗ്"
+      },
+      as: {
+        title: "কেৰাহেল্থ অতিথি",
+        subtitle: "প্ৰব্ৰজনকাৰী শ্ৰমিক স্বাস্থ্য নিৰীক্ষণ আৰু ডিজিটেল কাৰ্ড",
+        tabSurv: "স্বাস্থ্য নিৰীক্ষণ",
+        tabDoc: "চিকিৎসক পৰামৰ্শ",
+        tabCamp: "শিবিৰ পঞ্জীয়ন"
+      }
+    };
+
+    function changeLanguage(lang) {
+      const data = translations[lang] || translations.en;
+      document.getElementById('txt-title').innerText = data.title;
+      document.getElementById('txt-subtitle').innerText = data.subtitle;
+      document.getElementById('btn-tab-dashboard').innerHTML = `<i class="fa-solid fa-chart-line mr-1"></i> ${data.tabSurv}`;
+      document.getElementById('btn-tab-doctor').innerHTML = `<i class="fa-solid fa-stethoscope mr-1"></i> ${data.tabDoc}`;
+      document.getElementById('btn-tab-screening').innerHTML = `<i class="fa-solid fa-campground mr-1"></i> ${data.tabCamp}`;
+    }
+  </script>
+</body>
+</html>
